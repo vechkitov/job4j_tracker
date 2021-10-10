@@ -44,4 +44,24 @@ public class PointTest {
         double delta = 0.01;
         Assert.assertEquals(expected, actual, delta);
     }
+
+    @Test
+    public void whenX4Y3Z2ToX2Y1ZMinus4Then6Dot63() {
+        Point a = new Point(4, 3, 2);
+        Point b = new Point(2, 1, -4);
+        double expected = 6.63;
+        double actual = a.distance3d(b);
+        double delta = 0.01;
+        Assert.assertEquals(expected, actual, delta);
+    }
+
+    @Test
+    public void whenXMinus1YMinus1ZMinus1ToX3Y3Z3Then6Dot93() {
+        Point a = new Point(-1, -1, -1);
+        Point b = new Point(3, 3, 3);
+        double expected = 6.93;
+        double actual = a.distance3d(b);
+        double delta = 0.01;
+        Assert.assertEquals(expected, actual, delta);
+    }
 }
