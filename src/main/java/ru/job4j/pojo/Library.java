@@ -15,23 +15,11 @@ public class Library {
     }
 
     private Book[] fillLibrary() {
-        Book mumu = new Book();
-        mumu.setName("Муму");
-        mumu.setNumberOfPages(120);
-        Book bear = new Book();
-        bear.setName("Медведь");
-        bear.setNumberOfPages(100);
-        Book cleanCode = new Book();
-        cleanCode.setName("Clean code");
-        cleanCode.setNumberOfPages(480);
-        Book cookbook = new Book();
-        cookbook.setName("Кулинарная книга");
-        cookbook.setNumberOfPages(800);
         Book[] books = new Book[4];
-        books[0] = mumu;
-        books[1] = bear;
-        books[2] = cleanCode;
-        books[3] = cookbook;
+        books[0] = new Book("Муму", 120);
+        books[1] = new Book("Медведь", 100);
+        books[2] = new Book("Clean code", 480);
+        books[3] = new Book("Кулинарная книга", 800);
         return books;
     }
 
