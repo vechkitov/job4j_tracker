@@ -14,7 +14,8 @@ public class DeleteActionTest {
         int itemId = item.getId();
         String[] answers = {String.valueOf(itemId)};
         Input input = new StubInput(answers);
-        new DeleteAction().execute(input, tracker);
+        Output out = new ConsoleOutput();
+        new DeleteAction(out).execute(input, tracker);
         Item actual = tracker.findById(itemId);
         assertNull(actual);
     }

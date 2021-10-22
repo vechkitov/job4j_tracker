@@ -13,7 +13,8 @@ public class CreateActionTest {
         String[] answers = {itemName};
         Input input = new StubInput(answers);
         Tracker tracker = new Tracker();
-        new CreateAction().execute(input, tracker);
+        Output out = new ConsoleOutput();
+        new CreateAction(out).execute(input, tracker);
         Item created = tracker.findAll()[0];
         Item expected = new Item(itemName);
         assertThat(created.getName(), is(expected.getName()));

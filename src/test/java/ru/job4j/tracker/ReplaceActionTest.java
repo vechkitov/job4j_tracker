@@ -17,7 +17,8 @@ public class ReplaceActionTest {
                 String.valueOf(item.getId()),
                 itemName
         };
-        new ReplaceAction().execute(new StubInput(answers), tracker);
+        Output out = new ConsoleOutput();
+        new ReplaceAction(out).execute(new StubInput(answers), tracker);
         Item replaced = tracker.findById(item.getId());
         assertThat(replaced.getName(), is(itemName));
     }
