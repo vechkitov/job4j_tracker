@@ -37,10 +37,9 @@ public class ValidateInputTest {
         );
         ValidateInput input = new ValidateInput(out, in);
         int[] actual = new int[3];
-        for (int i = 0; i < actual.length; i++) {
-            int answer = input.askInt("Some question");
-            actual[i] = answer;
-        }
+        actual[0] = input.askInt("Some question");
+        actual[1] = input.askInt("Some question");
+        actual[2] = input.askInt("Some question");
         int[] expected = new int[]{1, 2, 3};
         assertThat(actual, is(expected));
     }
