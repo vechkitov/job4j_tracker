@@ -53,4 +53,14 @@ public class PhoneDictionaryTest {
     public void whenKeyIsNull() {
         new PhoneDictionary().find(null);
     }
+
+    @Test
+    public void whenElementNotFound() {
+        PhoneDictionary phones = new PhoneDictionary();
+        phones.add(
+                new Person("Petr", "Arsentev", "534872", "Bryansk")
+        );
+        ArrayList<Person> persons = phones.find("nothing");
+        assertThat(persons.size(), is(0));
+    }
 }
