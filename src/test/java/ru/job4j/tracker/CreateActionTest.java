@@ -15,7 +15,7 @@ public class CreateActionTest {
         Tracker tracker = new Tracker();
         Output out = new ConsoleOutput();
         new CreateAction(out).execute(input, tracker);
-        Item created = tracker.findAll()[0];
+        Item created = tracker.findAll().get(0);
         Item expected = new Item(itemName);
         assertThat(created.getName(), is(expected.getName()));
     }
