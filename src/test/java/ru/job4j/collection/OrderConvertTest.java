@@ -30,6 +30,15 @@ public class OrderConvertTest {
     }
 
     @Test
+    public void whenDuplicatesOrders() {
+        List<Order> orders = new ArrayList<>();
+        orders.add(new Order("3sfe", "Dress"));
+        orders.add(new Order("3sfe", "Dress"));
+        HashMap<String, Order> map = OrderConvert.process(orders);
+        assertThat(map.size(), is(1));
+    }
+
+    @Test
     public void whenNoOrders() {
         List<Order> orders = new ArrayList<>();
         HashMap<String, Order> map = OrderConvert.process(orders);
