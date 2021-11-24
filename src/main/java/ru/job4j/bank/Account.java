@@ -19,12 +19,8 @@ public class Account {
         return balance;
     }
 
-    public void putMoney(double sum) {
-        balance += sum;
-    }
-
-    public void withdrawMoney(double sum) {
-        balance -= sum;
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 
     @Override
