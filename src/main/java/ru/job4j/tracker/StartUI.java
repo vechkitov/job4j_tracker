@@ -9,10 +9,28 @@ public class StartUI {
         this.out = out;
     }
 
+    public static void main(String[] args) {
+        Output output = new ConsoleOutput();
+        Input input = new ValidateInput(output, new ConsoleInput());
+        Tracker tracker = new Tracker();
+        List<UserAction> actions = List.of(
+                new CreateAction(output),
+                new ShowAllAction(output),
+                new ReplaceAction(output),
+                new DeleteAction(output),
+                new FindByIdAction(output),
+                new FindByNameAction(output),
+                new ExitProgramAction()
+        );
+        new StartUI(output).init(input, tracker, actions);
+    }
+
     /**
      * Инициализирует приложение и запускает выполнение различных пользовательских действий
-     * @param input Input
+     *
+     * @param input   Input
      * @param tracker Tracker
+     * @param actions list of UserAction
      */
     public void init(Input input, Tracker tracker, List<UserAction> actions) {
         boolean run = true;
@@ -36,21 +54,5 @@ public class StartUI {
         for (int index = 0; index < actions.size(); index++) {
             out.println(index + ". " + actions.get(index).name());
         }
-    }
-
-    public static void main(String[] args) {
-        Output output = new ConsoleOutput();
-        Input input = new ValidateInput(output, new ConsoleInput());
-        Tracker tracker = new Tracker();
-        List<UserAction> actions = List.of(
-                new CreateAction(output),
-                new ShowAllAction(output),
-                new ReplaceAction(output),
-                new DeleteAction(output),
-                new FindByIdAction(output),
-                new FindByNameAction(output),
-                new ExitProgramAction()
-        );
-        new StartUI(output).init(input, tracker, actions);
     }
 }
