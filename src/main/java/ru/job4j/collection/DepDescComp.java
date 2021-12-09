@@ -8,26 +8,15 @@ public class DepDescComp implements Comparator<String> {
     @Override
     public int compare(String o1, String o2) {
         checkArgs(o1, o2);
-        String[] strArr1 = split(o1);
-        String[] strArr2 = split(o2);
+        String[] strArr1 = o1.split(slash, 2);
+        String[] strArr2 = o2.split(slash, 2);
         int rsl = strArr2[0].compareTo(strArr1[0]);
         if (rsl == 0) {
-            rsl = strArr1[1].compareTo(strArr2[1]);
+            rsl = strArr1.length == 1 || strArr2.length == 1
+                    ? Integer.compare(strArr1.length, strArr2.length)
+                    : strArr1[1].compareTo(strArr2[1]);
         }
         return rsl;
-    }
-
-    private String[] split(String s) {
-        String part1 = "";
-        String part2 = "";
-        int idx = s.indexOf(slash);
-        if (idx == -1) {
-            part1 = s;
-        } else {
-            part1 = s.substring(0, idx);
-            part2 = s.endsWith(slash) ? "" : s.substring(idx + 1);
-        }
-        return new String[]{part1, part2};
     }
 
     private void checkArgs(String o1, String o2) {
