@@ -8,7 +8,7 @@ public class School {
 
     public List<Student> collect(List<Student> students, Predicate<Student> predict) {
         return students.stream()
-                .filter(predict::test)
+                .filter(predict)
                 .collect(Collectors.toList());
     }
 }
