@@ -94,8 +94,8 @@ public class AnalyzeTest {
                 ).stream()
         );
         assertThat(average, is(List.of(
-                new Tuple("Lang", 80d),
                 new Tuple("Math", 80d),
+                new Tuple("Lang", 80d),
                 new Tuple("Philosophy", 80d)
         )));
     }
