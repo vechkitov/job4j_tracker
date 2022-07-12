@@ -10,7 +10,7 @@ public class ReplaceActionTest {
     @Test
     public void whenReplaceItem() {
         String itemName = "replaced item";
-        Tracker tracker = new Tracker();
+        MemTracker tracker = new MemTracker();
         Item item = new Item("new item");
         tracker.add(item);
         String[] answers = {

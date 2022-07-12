@@ -8,7 +8,7 @@ public class DeleteActionTest {
 
     @Test
     public void whenDeleteItem() {
-        Tracker tracker = new Tracker();
+        MemTracker tracker = new MemTracker();
         Item item = new Item("new item");
         tracker.add(item);
         int itemId = item.getId();

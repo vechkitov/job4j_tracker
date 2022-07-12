@@ -1,5 +1,6 @@
 package ru.job4j.tracker;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class StartUI {
@@ -9,30 +10,31 @@ public class StartUI {
         this.out = out;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         Output output = new ConsoleOutput();
         Input input = new ValidateInput(output, new ConsoleInput());
-        Tracker tracker = new Tracker();
-        List<UserAction> actions = List.of(
-                new CreateAction(output),
-                new ShowAllAction(output),
-                new ReplaceAction(output),
-                new DeleteAction(output),
-                new FindByIdAction(output),
-                new FindByNameAction(output),
-                new ExitProgramAction()
-        );
-        new StartUI(output).init(input, tracker, actions);
+        try (SqlTracker tracker = new SqlTracker()) {
+            List<UserAction> actions = List.of(
+                    new CreateAction(output),
+                    new ShowAllAction(output),
+                    new ReplaceAction(output),
+                    new DeleteAction(output),
+                    new FindByIdAction(output),
+                    new FindByNameAction(output),
+                    new ExitProgramAction()
+            );
+            new StartUI(output).init(input, tracker, actions);
+        }
     }
 
     /**
      * Инициализирует приложение и запускает выполнение различных пользовательских действий
      *
      * @param input   Input
-     * @param tracker Tracker
+     * @param store   Store
      * @param actions list of UserAction
      */
-    public void init(Input input, Tracker tracker, List<UserAction> actions) {
+    public void init(Input input, Store store, List<UserAction> actions) {
         boolean run = true;
         while (run) {
             this.showMenu(actions);
@@ -42,7 +44,7 @@ public class StartUI {
                 continue;
             }
             UserAction action = actions.get(select);
-            run = action.execute(input, tracker);
+            run = action.execute(input, store);
         }
     }
 

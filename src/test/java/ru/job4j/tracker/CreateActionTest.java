@@ -12,7 +12,7 @@ public class CreateActionTest {
         String itemName = "Fix PC";
         String[] answers = {itemName};
         Input input = new StubInput(answers);
-        Tracker tracker = new Tracker();
+        MemTracker tracker = new MemTracker();
         Output out = new ConsoleOutput();
         new CreateAction(out).execute(input, tracker);
         Item created = tracker.findAll().get(0);
