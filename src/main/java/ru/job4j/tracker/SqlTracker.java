@@ -1,5 +1,8 @@
 package ru.job4j.tracker;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,6 +11,7 @@ import java.util.Properties;
 
 public class SqlTracker implements Store, AutoCloseable {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SqlTracker.class);
     private Connection cn;
 
     public SqlTracker() {
@@ -32,67 +36,63 @@ public class SqlTracker implements Store, AutoCloseable {
 
     @Override
     public Item add(Item item) {
-        try (final PreparedStatement ps = cn.prepareStatement(
+        try (PreparedStatement ps = cn.prepareStatement(
                 "insert into items(name, created) values(?,?);",
                 PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, item.getName());
             ps.setTimestamp(2, Timestamp.valueOf(item.getCreated()));
             ps.execute();
-            try (final ResultSet keys = ps.getGeneratedKeys()) {
+            try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
                     item.setId(keys.getInt(1));
                 }
             }
         } catch (SQLException e) {
-            throw new IllegalStateException(String.format(
-                    "Не удалось добавить заявку %s в БД: %s", item, e));
+            LOG.error("Не удалось добавить заявку '{}' в БД", item, e);
         }
         return item;
     }
 
     @Override
     public boolean replace(int id, Item item) {
-        try (final PreparedStatement ps = cn.prepareStatement(
+        boolean rsl = false;
+        try (PreparedStatement ps = cn.prepareStatement(
                 "update items set name = ?, created = ? where id = ?;")) {
             ps.setString(1, item.getName());
             ps.setTimestamp(2, Timestamp.valueOf(item.getCreated()));
             ps.setInt(3, id);
-            return ps.executeUpdate() > 0;
+            rsl = ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new IllegalStateException(String.format(
-                    "Не удалось заменить заявку в БД (id=%d): %s", id, e));
+            LOG.error("Не удалось заменить заявку с id={} в БД", id, e);
         }
+        return rsl;
     }
 
     @Override
     public boolean delete(int id) {
-        try (final PreparedStatement ps = cn.prepareStatement(
+        boolean rsl = false;
+        try (PreparedStatement ps = cn.prepareStatement(
                 "delete from items where id = ?;")) {
             ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
+            rsl = ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new IllegalStateException(String.format(
-                    "Не удалось удалить заявку из БД (id=%d): %s", id, e));
+            LOG.error("Не удалось удалить заявку с id={} из БД", id, e);
         }
+        return rsl;
     }
 
     @Override
     public List<Item> findAll() {
         final List<Item> items = new ArrayList<>();
-        try (final PreparedStatement ps = cn.prepareStatement(
+        try (PreparedStatement ps = cn.prepareStatement(
                 "select id, name, created from items;")) {
-            try (final ResultSet rs = ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    items.add(
-                            new Item(rs.getInt("id"),
-                                    rs.getString("name"),
-                                    rs.getTimestamp("created").toLocalDateTime())
-                    );
+                    items.add(createItem(rs));
                 }
             }
         } catch (SQLException e) {
-            throw new IllegalStateException(String.format(
-                    "Не удалось получить заявки из БД: %s", e));
+            LOG.error("Не удалось получить заявки из БД", e);
         }
         return items;
     }
@@ -100,21 +100,16 @@ public class SqlTracker implements Store, AutoCloseable {
     @Override
     public List<Item> findByName(String name) {
         final List<Item> items = new ArrayList<>();
-        try (final PreparedStatement ps = cn.prepareStatement(
+        try (PreparedStatement ps = cn.prepareStatement(
                 "select id, name, created from items where name = ?;")) {
             ps.setString(1, name);
-            try (final ResultSet rs = ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    items.add(
-                            new Item(rs.getInt("id"),
-                                    rs.getString("name"),
-                                    rs.getTimestamp("created").toLocalDateTime())
-                    );
+                    items.add(createItem(rs));
                 }
             }
         } catch (SQLException e) {
-            throw new IllegalStateException(String.format(
-                    "Не удалось получить заявки из БД с name=%s: %s", name, e));
+            LOG.error("Не удалось получить заявки с name='{}' из БД", name, e);
         }
         return items;
     }
@@ -122,19 +117,16 @@ public class SqlTracker implements Store, AutoCloseable {
     @Override
     public Item findById(int id) {
         Item item = null;
-        try (final PreparedStatement ps = cn.prepareStatement(
+        try (PreparedStatement ps = cn.prepareStatement(
                 "select id, name, created from items where id = ?;")) {
             ps.setInt(1, id);
-            try (final ResultSet rs = ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    item = new Item(rs.getInt("id"),
-                            rs.getString("name"),
-                            rs.getTimestamp("created").toLocalDateTime());
+                    item = createItem(rs);
                 }
             }
         } catch (SQLException e) {
-            throw new IllegalStateException(String.format(
-                    "Не удалось найти заявку в БД с id=%d: %s", id, e));
+            LOG.error("Не удалось получить заявку с id={} из БД", id, e);
         }
         return item;
     }
@@ -144,5 +136,11 @@ public class SqlTracker implements Store, AutoCloseable {
         if (cn != null) {
             cn.close();
         }
+    }
+
+    private Item createItem(ResultSet rs) throws SQLException {
+        return new Item(rs.getInt("id"),
+                rs.getString("name"),
+                rs.getTimestamp("created").toLocalDateTime());
     }
 }
