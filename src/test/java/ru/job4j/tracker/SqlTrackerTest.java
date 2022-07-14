@@ -55,16 +55,14 @@ public class SqlTrackerTest {
     @Test
     public void whenSaveItemAndFindByGeneratedIdThenMustBeTheSame() {
         SqlTracker tracker = new SqlTracker(cn);
-        Item item = new Item("item");
-        tracker.add(item);
+        Item item = tracker.add(new Item("item"));
         assertThat(tracker.findById(item.getId()), is(item));
     }
 
     @Test
     public void whenReplaceItemThenReturnNewName() {
         SqlTracker tracker = new SqlTracker(cn);
-        Item item = new Item("item");
-        tracker.add(item);
+        Item item = tracker.add(new Item("item"));
         tracker.replace(item.getId(), new Item("new item"));
         assertThat(tracker.findById(item.getId()).getName(), is("new item"));
     }
@@ -72,8 +70,7 @@ public class SqlTrackerTest {
     @Test
     public void whenDeleteItemThenItemNotFound() {
         SqlTracker tracker = new SqlTracker(cn);
-        Item item = new Item("item");
-        tracker.add(item);
+        Item item = tracker.add(new Item("item"));
         tracker.delete(item.getId());
         assertThat(tracker.findById(item.getId()), is(nullValue()));
     }
@@ -81,27 +78,27 @@ public class SqlTrackerTest {
     @Test
     public void whenFindAllThenReturnAllItems() {
         SqlTracker tracker = new SqlTracker(cn);
-        tracker.add(new Item("First"));
-        tracker.add(new Item("Second"));
-        assertThat(tracker.findAll().size(), is(2));
+        Item item1 = tracker.add(new Item("First"));
+        Item item2 = tracker.add(new Item("Second"));
+        assertThat(tracker.findAll(),
+                is(List.of(item1, item2)));
     }
 
     @Test
     public void whenFindByNameThenReturnItemsWithTheSameName() {
         SqlTracker tracker = new SqlTracker(cn);
         final String name = "First";
-        tracker.add(new Item(name));
-        tracker.add(new Item(name));
-        List<Item> result = tracker.findByName(name);
-        assertThat(result.size(), is(2));
-        assertThat(result.get(0).getName(), is(name));
+        Item item1 = tracker.add(new Item(name));
+        Item item2 = tracker.add(new Item(name));
+        tracker.add(new Item("Third"));
+        assertThat(tracker.findByName(name),
+                is(List.of(item1, item2)));
     }
 
     @Test
     public void whenFindByIdThenReturnItemWithTheSameId() {
         SqlTracker tracker = new SqlTracker(cn);
-        Item item = new Item("item");
-        tracker.add(item);
+        Item item = tracker.add(new Item("item"));
         Item foundItem = tracker.findById(item.getId());
         assertThat(foundItem.getId(),
                 is(item.getId()));
