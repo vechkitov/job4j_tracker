@@ -142,24 +142,10 @@
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
-                <version>3.6.2</version>
+                <version>4.15.0</version>
                 <configuration>
-                    <changeLogFile>${basedir}/db/master.xml</changeLogFile> <!-- файл с указанием путей к скриптам -->
-                    <url>${db.url}</url>                <!-- эти значения берутся из активного <profile> -->
-                    <driver>${db.driver}</driver>
-                    <username>${db.username}</username>
-                    <password>${db.password}</password>
-                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+                    <propertyFile>db/liquibase.properties</propertyFile>
                 </configuration>
-                <executions>    <!-- на какой фазе (phase) сборки запускать плагин и что он делает (goal) -->
-                    <execution>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>clearCheckSums</goal>
-                            <goal>update</goal>         <!-- https://docs.liquibase.com/tools-integrations/maven/commands/maven-update.html -->
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
