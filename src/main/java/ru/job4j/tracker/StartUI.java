@@ -1,6 +1,6 @@
 package ru.job4j.tracker;
 
-import java.sql.SQLException;
+import java.time.LocalTime;
 import java.util.List;
 
 public class StartUI {
@@ -10,21 +10,22 @@ public class StartUI {
         this.out = out;
     }
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
         Output output = new ConsoleOutput();
         Input input = new ValidateInput(output, new ConsoleInput());
-        try (SqlTracker tracker = new SqlTracker()) {
-            List<UserAction> actions = List.of(
-                    new CreateAction(output),
-                    new ShowAllAction(output),
-                    new ReplaceAction(output),
-                    new DeleteAction(output),
-                    new FindByIdAction(output),
-                    new FindByNameAction(output),
-                    new ExitProgramAction()
-            );
-            new StartUI(output).init(input, tracker, actions);
-        }
+        MemTracker tracker = new MemTracker();
+        List<UserAction> actions = List.of(
+                new CreateAction(output),
+                new ShowAllAction(output),
+                new ReplaceAction(output),
+                new DeleteAction(output),
+                new FindByIdAction(output),
+                new FindByNameAction(output),
+                new CreateMassAction(output),
+                new DeleteHalfOfItemsAction(output),
+                new ExitProgramAction()
+        );
+        new StartUI(output).init(input, tracker, actions);
     }
 
     /**
@@ -44,7 +45,9 @@ public class StartUI {
                 continue;
             }
             UserAction action = actions.get(select);
+            LocalTime t1 = LocalTime.now();
             run = action.execute(input, store);
+            System.out.printf("%s - %s%n", t1, LocalTime.now());
         }
     }
 
